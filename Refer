@@ -1,0 +1,177 @@
+COMMANDS:
+
+DOCKER BUILD IMAGE	docker build
+	-t imageName 
+	dockerFileLocation
+DOCKER RUN IMAGE AND CREATE CONTAINER	Docker run
+	 --name=containerName
+	 --network=networkName
+	 -e environmentKey=environmentValue
+	-d
+	-p 5433:5432 
+	imageName
+DOCKER COMPOSE FILE 	Docker compose up --build
+[A combination of all docker commands]
+
+
+
+
+
+Dockerfile
+
+	FROM node:22-alpine3.20 AS stage1
+	WORKDIR /frontend
+	COPY . .
+	RUN npm install
+	RUN npm run build
+	
+	FROM nginx:alpine
+	COPY --from=stage1 /frontend/nginx.conf /etc/nginx
+	COPY --from=stage1 /frontend/dist/frontend/browser /usr/share/nginx/html
+	EXPOSE 80
+	CMD ["nginx","-g","daemon off;"]
+
+
+
+nginx.conf
+
+	# the events block is required
+	events{}
+	http {
+	    # include the default mime.types to map file extensions to MIME types
+	    include /etc/nginx/mime.types;
+	    server {
+	        # set the root directory for the server (we need to copy our
+	        # application files here)
+	        root /usr/share/nginx/html;
+	        
+	        index index.html;
+	        # specify the configuration for the '/' location
+	        location / {
+	           
+	            try_files $uri $uri/ /index.html;
+	            
+	        }
+	        # location /api{
+	        #     proxy_pass http://backendcont:8080/api;
+	        # }
+	    
+	    }
+	}
+
+
+
+
+-----------BACKEND-------------
+
+
+RDS PROPERTIES-
+
+Application.propperties:
+
+	spring.datasource.url=jdbc:postgresql://postgres.cbw80e8io9u6.ap-south-1.rds.amazonaws.com:5432/postgres
+	spring.datasource.username=postgres
+	spring.datasource.password=postgres
+	spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+	# spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+	
+	spring.jpa.hibernate.ddl-auto=create
+	
+	spring.jpa.show-sql=true
+	spring.jpa.properties.hibernate.format_sql=true
+	
+	
+	
+DOCKER -
+
+	FROMeclipse-temurin:21-jdk-alpine
+	WORKDIR/backend
+	COPY./target/backend-0.0.1-SNAPSHOT.jar.
+	EXPOSE8080
+	CMD["java","-jar","backend-0.0.1-SNAPSHOT.jar"]
+
+
+
+
+
+docker-compose.yml
+
+
+	networks:
+	  ecommerce-network:
+	    driver: bridge
+	
+	services:
+	
+	  angular-app:
+	    image: frontendcomposeimg 
+	    container_name: frontendcomposecontainer
+	    build:
+	      context: ./frontend 
+	      dockerfile: Dockerfile 
+	    ports:
+	      - "80:80"  
+	    depends_on:
+	    - spring-boot-app  
+	    networks:
+	      - ecommerce-network
+	
+	  spring-boot-app:
+	    image: backendcomposeimg  
+	    container_name: backendcomposecontainer
+	    build:
+	      context: ./backend
+	      dockerfile: Dockerfile
+	    ports:
+	      - "8089:8080"
+	    networks:
+	      - ecommerce-network
+
+
+
+
+
+	
+	
+
+
+
+KUBERNETE
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-deployment
+  labels:
+    app: spring-boot-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: spring-boot-deployment
+  template:
+    metadata:
+      labels:
+        app: spring-boot-deployment
+    spec:
+      containers:
+        - name: spring-boot-cont
+          image: thorabh/ecommerce-backend-img:2.0
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-boot-service
+spec:
+  type: LoadBalancer  # Use LoadBalancer if you want external access
+  selector:
+    app: spring-boot-deployment
+  ports:
+    - protocol: TCP
+      port: 8080     # Exposed service port
+      targetPort: 8080  # Container port where Spring Boot app is running
+
+
