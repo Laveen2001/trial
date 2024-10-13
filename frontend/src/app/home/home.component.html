@@ -1,0 +1,74 @@
+<p>home works!</p>
+
+<div class="cls">
+    <h1> Header Tag</h1>
+    <ol>
+        <li> Item </li>
+    </ol>
+    <img src="imageUrl"/>
+</div>
+<a href="redirectionUrl"> Click </a>
+<form>
+    <input [(ngModel)]="name" name="Timepass" placeholder="Enter text"  />
+
+
+    <p> {{name}}</p>
+
+    <button type="button"> SUBMIT </button>
+</form>
+
+
+<button (click)="changeName()" > Changer</button>
+
+
+
+<li>
+<a [routerLink]="['/about',12]" [queryParams]="{name:'ram'}"> ABOUT </a>
+
+<a routerLink="/home"> HOME </a>
+
+
+</li>
+
+
+
+<form [formGroup]="formGroup">
+
+    <input type="text"  [formControl]="name" placeholder="Enter name">
+    <input type="text"  [formControl]="email" placeholder="Enter email">
+    <input type="text"  [formControl]="age" placeholder="Enter age">
+
+    <button (click)="modifyArray(name,email)" ></button>
+    <button (click)="modifyArray(name,email)" ></button>
+
+
+    <button (click)="call()" >submit</button>
+</form>
+
+
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th> Age </th>
+        </tr>
+
+    </thead>
+    <tbody>
+        @for (item of items; track $index) {
+            <tr>
+                <td> {{item.name}}</td>
+                <td> {{item.age}}</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+
+
+
+
+
+

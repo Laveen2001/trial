@@ -1,0 +1,11 @@
+.card{
+    display: flex;
+    background-color: lightgoldenrodyellow;
+    align-items: center;
+    justify-content: space-around;
+    column-gap: 10px;
+}
+
+.child{
+    background-color: pink;
+}

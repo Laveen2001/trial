@@ -1,0 +1,15 @@
+<app-home/>
+
+
+
+
+<div class="card">
+@for (item of arr; track $index) {
+    <div class="child">
+    <p>{{item.name}}</p>
+    <app-about [name]=item.name [age]=item.age/>
+</div>
+}
+</div>
+
+<!-- <router-outlet/> -->

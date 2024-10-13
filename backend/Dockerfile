@@ -1,0 +1,5 @@
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /backend
+COPY ./target/backend-0.0.1-SNAPSHOT.jar .
+EXPOSE 8080
+CMD ["java","-jar","backend-0.0.1-SNAPSHOT.jar"]

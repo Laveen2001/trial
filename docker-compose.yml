@@ -1,0 +1,30 @@
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+services:
+  angular-app:
+    image: frontendcomposeimg 
+    container_name: frontendcomposecontainer
+    build:
+      context: ./frontend 
+      dockerfile: Dockerfile 
+    ports:
+      - "80:80"  
+    depends_on:
+    - spring-boot-app  
+    networks:
+      - ecommerce-network
+
+  spring-boot-app:
+    image: backendcomposeimg  
+    container_name: backendcomposecontainer
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8089:8080"
+    networks:
+      - ecommerce-network
+
